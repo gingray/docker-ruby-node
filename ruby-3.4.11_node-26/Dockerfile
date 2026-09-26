@@ -1,18 +1,11 @@
-FROM ruby:3.4.11-trixie
+FROM --platform=linux/amd64 ruby:3.4.11-trixie
 
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
 ENV NODE_VERSION=26.10.0
 
-RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
-  && case "${dpkgArch##*-}" in \
-    amd64) ARCH='x64';; \
-    ppc64el) ARCH='ppc64le';; \
-    s390x) ARCH='s390x';; \
-    arm64) ARCH='arm64';; \
-    *) echo "unsupported architecture"; exit 1 ;; \
-  esac \
+RUN ARCH=x64 \
   && export GNUPGHOME="$(mktemp -d)" \
   # gpg keys listed at https://github.com/nodejs/node#release-keys
   && set -ex \
